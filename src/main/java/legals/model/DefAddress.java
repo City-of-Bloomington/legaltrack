@@ -1,5 +1,6 @@
 package legals.model;
 import java.sql.*;
+import javax.sql.*;
 import java.io.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,107 +70,41 @@ public class DefAddress extends Address{
     public String doSave(){
 	String back = "";
 	Connection con = null;
-	Statement stmt = null;
+	PreparedStatement stmt = null;
 	ResultSet rs = null;
-	/*
-	  if(street_address.equals("")){
-	  back = "Street address is required";
-	  return back;
-	  }
-	*/
+	if(defId.isEmpty()){
+	    back = "Defendant id not set ";
+	    return back;
+	}
 	if(street_num.equals("") && street_name.equals("")){
 	    back = "Street number and name are required";
 	    return back;
 	}	
 				
-	String qq = " insert into legal_def_addresses value(0,"+defId+",";
-	if(street_num.equals("")){
-	    qq += "null,";
-	}
-	else {
-	    qq += "'"+street_num+"',";
-	}
-	if(street_dir.equals("")){
-	    qq += "null,";
-	}
-	else {
-	    qq += "'"+street_dir+"',";
-	}
-	if(street_name.equals("")){
-	    qq += "null,";
-	}
-	else {
-	    qq += "'"+Helper.escapeIt(street_name)+"',";
-	}
-	if(street_type.equals("")){
-	    qq += "null,";
-	}
-	else {
-	    qq += "'"+street_type+"',";
-	}
-	if(post_dir.equals("")){
-	    qq += "null,";
-	}
-	else {
-	    qq += "'"+post_dir+"',";
-	}
-	if(sud_type.equals("")){
-	    qq += "null,";
-	}
-	else {
-	    qq += "'"+sud_type+"',";
-	}
-	if(sud_num.equals("")){
-	    qq += "null,";
-	}
-	else {
-	    qq += "'"+sud_num+"',";
-	}
-	if(invalid_addr.equals(""))
-	    qq += "null,";
-	else
-	    qq += "'Y',";
-	if(city.equals(""))
-	    qq += "null,";
-	else
-	    qq += "'"+city+"',";
-	if(state.equals(""))
-	    qq += "null,";
-	else
-	    qq += "'"+state+"',";
-	if(zip.equals(""))
-	    qq += "null,";
-	else
-	    qq += "'"+zip+"',";
-	if(addr_date.equals(""))
-	    qq += "null";
-	else
-	    qq += "str_to_date('"+addr_date+"','%m/%d/%Y')";
-	/*
-	  if(street_address.equals("")){
-	  street_address = getAddress();
-	  }
-	  qq += "'"+street_address+"'";
-	*/
-	qq += ")";
-	if(debug){
-	    logger.debug(qq);
-	}
+	String qq = " insert into legal_def_addresses value(0,?,?,?,?,"+
+	    "?,?,?,?,?,"+
+	    "?,?,?,?)";
 	con = Helper.getConnection();
 	if(con == null){
 	    back = "Could not connect to DB";
 	    return back;
 	}
 	try{
-	    stmt = con.createStatement();
-	    stmt.executeUpdate(qq);
-	    qq = "select LAST_INSERT_ID() ";
-	    if(debug){
-		logger.debug(qq);
-	    }
-	    rs = stmt.executeQuery(qq);
-	    if(rs.next()){
-		id = rs.getString(1);
+	    back = fillStatement(stmt);
+	    if(back.isEmpty()){
+		stmt = con.prepareStatement(qq);
+		if(debug){
+		    logger.debug(qq);
+		}
+		qq = "select LAST_INSERT_ID() ";
+		if(debug){
+		    logger.debug(qq);
+		}
+		stmt = con.prepareStatement(qq);
+		rs = stmt.executeQuery();
+		if(rs.next()){
+		    id = rs.getString(1);
+		}
 	    }
 	}
 	catch(Exception ex){
@@ -179,6 +114,89 @@ public class DefAddress extends Address{
 	}
 	finally{
 	    Helper.databaseDisconnect(con, stmt, rs);
+	}
+	return back;
+    }
+    private String fillStatement(PreparedStatement stmt){
+	String back  = "";
+	try{
+	    stmt.setString(1, defId);
+	    if(street_num.equals("")){
+		stmt.setNull(2, Types.VARCHAR);
+	    }
+	    else{
+		stmt.setString(2, street_num);
+	    }
+	    if(street_dir.equals("")){
+		stmt.setNull(3, Types.VARCHAR);
+	    }
+	    else{
+		stmt.setString(3, street_dir);
+	    }
+	    if(street_name.equals("")){
+		stmt.setNull(4, Types.VARCHAR);
+	    }
+	    else{
+		stmt.setString(4, street_name);
+	    }
+	    if(street_type.equals("")){
+		stmt.setNull(5, Types.VARCHAR);
+	    }
+	    else{
+		stmt.setString(5, street_type);
+	    }
+	    if(post_dir.equals("")){
+		stmt.setNull(6, Types.VARCHAR);
+	    }
+	    else{
+		stmt.setString(6, post_dir);
+	    }
+	    if(sud_type.equals("")){
+		stmt.setNull(7, Types.VARCHAR);
+	    }
+	    else{
+		stmt.setString(7, sud_type);
+	    }
+	    if(sud_num.equals("")){
+		stmt.setNull(8, Types.VARCHAR);
+	    }
+	    else{
+		stmt.setString(8, sud_num);
+	    }
+	    if(invalid_addr.equals("")){
+		stmt.setNull(9, Types.CHAR);
+	    }
+	    else{
+		stmt.setString(9, "y");
+	    }
+	    if(city.equals("")){
+		stmt.setNull(10, Types.VARCHAR);
+	    }
+	    else{
+		stmt.setString(10, city);
+	    }
+	    if(state.equals("")){
+		stmt.setNull(11, Types.VARCHAR);
+	    }
+	    else{
+		stmt.setString(11, state);
+	    }
+	    if(zip.equals("")){
+		stmt.setNull(12, Types.VARCHAR);
+	    }
+	    else{
+		stmt.setString(12, zip);
+	    }
+	    if(addr_date.equals("")){
+		stmt.setNull(13, Types.DATE);
+	    }
+	    else{
+		stmt.setString(13,"str_to_date('"+addr_date+"','%m/%d/%Y')");
+	    }
+
+	}catch(Exception ex){
+	    logger.error(ex);
+	    back += ex;
 	}
 	return back;
     }
@@ -218,7 +236,6 @@ public class DefAddress extends Address{
 	    "street_num,street_dir,street_name,street_type,"+
 	    "sud_type,sud_num,post_dir, "+
 	    "invalid_addr,city,state,zip,date_format(addr_date,'%m/%d/%Y') "+
-	    // ",street_address "+
 	    "from legal_def_addresses where id="+id;
 	if(debug){
 	    logger.debug(qq);
@@ -267,10 +284,6 @@ public class DefAddress extends Address{
 		if(str != null) zip = str;
 		str = rs.getString(13);
 		if(str != null) addr_date = str;
-		/*
-		  str = rs.getString(14);
-		  if(str != null) street_address = str;
-		*/
 	    }
 	}
 	catch(Exception ex){
@@ -287,91 +300,24 @@ public class DefAddress extends Address{
 	//		
 	String back = "";
 	Connection con = null;
-	Statement stmt = null;
+	PreparedStatement stmt = null;
 	ResultSet rs = null;
-	String qq = " update legal_def_addresses set ";		
+	String qq = " update legal_def_addresses set defId=?, "+
+	    "street_num=?,street_dir = ?, street_name=?,street_type=?,"+
+	    "post_dir=?,sud_type=?,sud_num=?,invalid_addr=?,city=?,state=?,"+
+	    "zip=?,addr_date=? where id=? ";
 	con = Helper.getConnection();
 	if(con == null){
 	    back = "Could not connect to DB";
 	    return back;
 	}
-	if(street_address.equals("")){
-	    back="Street address is required";
-	    return back;
-	}
 	try{
-	    stmt = con.createStatement();
-	    if(street_num.equals("")){
-		qq += "street_num = null,";
+	    stmt = con.prepareStatement(qq);
+	    back = fillStatement(stmt);
+	    if(back.isEmpty()){
+		stmt.setString(14, id);
+		stmt.executeUpdate();
 	    }
-	    else {
-		qq += "street_num='"+street_num+"',";
-	    }
-	    if(street_dir.equals("")){
-		qq += "street_dir = null,";
-	    }
-	    else {
-		qq += "street_dir='"+street_dir+"',";
-	    }
-	    if(street_name.equals("")){
-		qq += "street_name=null,";
-	    }
-	    else {
-		qq += "street_name='"+Helper.escapeIt(street_name)+"',";
-	    }
-	    if(street_type.equals("")){
-		qq += "street_type=null,";
-	    }
-	    else {
-		qq += "street_type='"+street_type+"',";
-	    }
-	    if(post_dir.equals("")){
-		qq += "post_dir=null,";
-	    }
-	    else {
-		qq += "post_dir='"+post_dir+"',";
-	    }
-	    if(sud_type.equals("")){
-		qq += "sud_type=null,";
-	    }
-	    else {
-		qq += "sud_type='"+sud_type+"',";
-	    }
-	    if(sud_num.equals("")){
-		qq += "sud_num=null,";
-	    }
-	    else {
-		qq += "sud_num='"+sud_num+"',";
-	    }
-	    if(invalid_addr.equals(""))
-		qq += "invalid_addr=null,";
-	    else
-		qq += "invalid_addr='Y',";
-	    if(addr_date.equals(""))
-		qq += "addr_date=null,";
-	    else
-		qq += "addr_date=str_to_date('"+addr_date+"','%m/%d/%Y'),";
-	    if(street_address.equals("")){
-		street_address = getAddress();
-	    }
-	    qq += "street_address='"+street_address+"',";						
-	    if(city.equals(""))
-		qq += "city=null,";
-	    else
-		qq += "city='"+city+"',";
-	    if(zip.equals(""))
-		qq += "zip=null,";
-	    else
-		qq += "zip='"+zip+"',";
-	    if(state.equals(""))
-		qq += "state=null";
-	    else
-		qq += "state='"+state+"'";				
-	    qq += " where id="+id;
-	    if(debug){
-		logger.debug(qq);
-	    }
-	    stmt.executeUpdate(qq);
 	}
 	catch(Exception ex){
 	    logger.error(ex+" : "+qq);

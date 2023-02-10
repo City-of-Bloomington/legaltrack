@@ -43,24 +43,23 @@ public class NoteServ extends TopServlet{
 	res.setContentType("text/html");
 	PrintWriter out = res.getWriter();
 	String name, value;
-	Connection con = null;
-	Statement stmt = null;
-	ResultSet rs = null;
 	String action="";
 	String id="", comments = "", message="";
 	boolean success = true;
 	String [] vals;
 	Enumeration<String> values = req.getParameterNames();
-
+	Case lcase = new Case(debug);
 	while (values.hasMoreElements()){
 	    name = values.nextElement().trim();
 	    vals = req.getParameterValues(name);
 	    value = vals[vals.length-1].trim();	
 	    if (name.equals("id")){
 		id = value;
+		lcase.setId(id);
 	    }
 	    else if (name.equals("comments")) {
 		comments = value;
+		lcase.setComments(value);
 	    }
 	    else if (name.equals("action")) {
 		action = value;
@@ -68,36 +67,14 @@ public class NoteServ extends TopServlet{
 	}
 	//
 	if(!id.equals("")){
-	    String qq = "";
-	    try{
-		con = Helper.getConnection();
-		if(con != null){
-		    stmt = con.createStatement();
-		    if(action.equals("")){
-			qq = "select comments from legal_cases where id="+id;
-			if(debug)
-			    logger.debug(qq);
-			rs = stmt.executeQuery(qq);
-			if(rs.next()){
-			    String str = rs.getString(1);
-			    if(str != null)
-				comments = str;
-			}
-		    }
-		    else{ // update
-			qq = "update legal_cases set comments='"+
-			    Helper.escapeIt(comments)+"' where id="+id;
-			if(debug)
-			    logger.debug(qq);
-			stmt.executeUpdate(qq);
-		    }
+	    if(action.equals("")){
+		String back = lcase.doSelect();
+		if(back.isEmpty()){
+		    comments = lcase.getComments();
 		}
-		Helper.databaseDisconnect(con, stmt, rs);
 	    }
-	    catch(Exception ex){
-		logger.error(ex);
-		message += ex;
-		success = false;
+	    else{ // update
+		lcase.updateComments();
 	    }
 	}
 	//

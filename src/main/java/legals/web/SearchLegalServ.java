@@ -180,10 +180,10 @@ public class SearchLegalServ extends TopServlet{
 	out.println("<tr><td>&nbsp;</td><td>(mm/dd/yyyy)</td><td>&nbsp;</td><td>(mm/dd/yyyy)</td></tr>");
 		
 	out.println("<tr><td><label for='dateFrom'>Date, from:</label></td><td>");
-	out.println("<input name='dateFrom' size='10' "+
+	out.println("<input name='dateFrom' size='10' class=\"date\" "+
 		    "id='dateFrom' value='"+dateFrom+"' /></td><td>");
 	out.println("<label for='dateTo'> to:</label></td><td>");
-	out.println("<input name='dateTo' size='10' "+
+	out.println("<input name='dateTo' size='10' class=\"date\" "+
 		    "id='dateTo' value='"+dateTo+"' /></td></tr>");
 	out.println("</table></td></tr>");
 	//
@@ -197,6 +197,13 @@ public class SearchLegalServ extends TopServlet{
 	out.println("</td></tr></table>");
 	out.println("</fieldset>");
 	out.println("</form>");
+	out.println(Inserts.jsStrings(url));	
+	String dateStr = "{ nextText: \"Next\",prevText:\"Prev\", buttonText: \"Pick Date\", showOn: \"both\", navigationAsDateFormat: true, buttonImage: \""+url+"js/calendar.gif\"}";
+	out.println("<script>");
+	out.println(" var icons = { header:\"ui-icon-circle-plus\","+
+		    "               activeHeader:\"ui-icon-circle-minus\"}");
+	out.println("  $( \".date\" ).datepicker("+dateStr+"); ");
+	out.println("</script>");
 	out.println("</div>");
 	out.println("</body></html>");
 	out.close();

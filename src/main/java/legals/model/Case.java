@@ -885,6 +885,44 @@ public class Case {
 
 	return back;
     }
+    public String updateComments(){
+	//
+	String str = "", back = "";
+
+	Connection con = null;
+	PreparedStatement stmt = null;
+	ResultSet rs = null;
+	String qq = "update legal_cases set comments=? where id=?";
+	if(debug){
+	    logger.debug(qq);
+	}				
+	con = Helper.getConnection();
+	if(con == null){
+	    back = "Could not connect to DB ";
+	    logger.error(back);
+	    return back;
+	}
+	try{
+	    stmt = con.prepareStatement(qq);
+	    if(comments.isEmpty()){
+		stmt.setNull(1, Types.VARCHAR);
+	    }
+	    else{
+		stmt.setString(1, comments);
+	    }
+	    stmt.setString(2, id);
+	    stmt.executeUpdate();
+	}
+	catch(Exception ex){
+	    logger.error(ex+" : "+qq);
+	    back += " Could not update data ";
+	    back += ex;
+	}
+	finally{
+	    Helper.databaseDisconnect(con, stmt, rs);
+	}
+	return back;
+    }    
     public String doDelete(){
 	//
 	String back = "";
