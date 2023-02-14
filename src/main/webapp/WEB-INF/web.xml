@@ -23,15 +23,15 @@
   -->     
   <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/Login</url-pattern>
+    <url-pattern>/CasLogin</url-pattern>
   </filter-mapping>
   <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/Login</url-pattern>
+    <url-pattern>/CasLogin</url-pattern>
   </filter-mapping>
   <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/Login</url-pattern>
+    <url-pattern>/CasLogin</url-pattern>
   </filter-mapping>
   <session-config>
     <cookie-config>

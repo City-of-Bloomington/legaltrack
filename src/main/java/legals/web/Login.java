@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import legals.model.*;
 import legals.utils.*;
 
-@WebServlet(urlPatterns = {"/Login"})
+@WebServlet(urlPatterns = {"/CasLogin"})
 public class Login extends TopServlet{
 
     //
