@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import legals.model.*;
 import legals.utils.*;
 
-public class ActionList{ // extends ArrayList<Action>{
+public class ActionList{ 
 
     boolean debug;
     static final long serialVersionUID = 12L;
