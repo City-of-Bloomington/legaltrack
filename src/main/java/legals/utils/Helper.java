@@ -534,6 +534,10 @@ public class Helper{
 		logger.error(str);
 	    }
 	    else{
+		String qq = "ALTER SESSION SET CURRENT_SCHEMA=rental";
+		PreparedStatement pstmt = con.prepareStatement(qq);
+		pstmt.executeUpdate();
+		pstmt.close();
 		c_con++;
 		logger.debug("Got connection Ora: "+c_con);
 	    }
