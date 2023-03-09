@@ -24,7 +24,7 @@ public class MsgMail{
     static String msgText = "";
     static String to = "";
     static String from = "";
-    static String host = "localhost"; 
+    static String host = "smtp.bloomington.in.gov"; 
     static boolean debug = true;
     static String subject = "Start Legal";
     static String cc = null;
