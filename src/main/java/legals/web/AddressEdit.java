@@ -124,31 +124,7 @@ public class AddressEdit extends TopServlet{
 	    return; 
 	}
 	if(!invalid_addr.equals("")) invalid_addr = "Y";
-	if(action.equals("zoom")){
-	    //
-	    addr = new Address(debug, id);
-	    String back = addr.doSelect();
-	    if(back.equals("")){
-		street_num = addr.getStreet_num();
-		street_dir = addr.getStreet_dir();
-		street_type = addr.getStreet_type();
-		street_name = addr.getStreet_name();
-		sud_num = addr.getSud_num();
-		sud_type = addr.getSud_type();
-		post_dir = addr.getPost_dir();
-		street_address = addr.getStreet_address();
-		case_id = addr.getCase_id();
-								
-		invalid_addr = addr.getInvalid_addr();
-		rental_addr = addr.getRental_addr();
-	    }
-	    else{
-		logger.error(back);
-		message += back;
-		success = false;
-	    }
-	}
-	else if(action.equals("Save") && user.canEdit()){
+	if(action.equals("Save") && user.canEdit()){
 	    //
 	    // check for address
 	    //
@@ -216,6 +192,30 @@ public class AddressEdit extends TopServlet{
 	    }
 	    else{
 		message += " Deleted Successfully";
+	    }
+	}
+	else if(!id.isEmpty()){
+	    //
+	    addr = new Address(debug, id);
+	    String back = addr.doSelect();
+	    if(back.equals("")){
+		street_num = addr.getStreet_num();
+		street_dir = addr.getStreet_dir();
+		street_type = addr.getStreet_type();
+		street_name = addr.getStreet_name();
+		sud_num = addr.getSud_num();
+		sud_type = addr.getSud_type();
+		post_dir = addr.getPost_dir();
+		street_address = addr.getStreet_address();
+		case_id = addr.getCase_id();
+								
+		invalid_addr = addr.getInvalid_addr();
+		rental_addr = addr.getRental_addr();
+	    }
+	    else{
+		logger.error(back);
+		message += back;
+		success = false;
 	    }
 	}
 	else{ // new and ""

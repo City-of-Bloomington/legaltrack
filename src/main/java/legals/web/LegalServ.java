@@ -222,7 +222,7 @@ public class LegalServ extends TopServlet{
 		act_id="";
 	    }
 	}
-	else if(action.equals("zoom") || action.startsWith("Print")){	
+	else if(!id.isEmpty() || action.startsWith("Print")){	
 	    //
 	    if(!act_id.equals("")){
 		Action ac = new Action(debug, act_id);
@@ -349,10 +349,10 @@ public class LegalServ extends TopServlet{
 		    //
 		    // excluded person to himself
 		    //
-		    String email = handMail;
-		    String cc_email = handMail2;
+		    String email = handMail+emailStr;
+		    String cc_email = handMail2+emailStr;;
 		    if(attention.equals("Legal")){
-			email = legalMail;
+			email = legalMail+emailStr;
 			cc_email = null;
 		    }
 		    if(!email.equals("") && !email.contains(user.getUserid())){ 
@@ -389,10 +389,10 @@ public class LegalServ extends TopServlet{
 		    //
 		    // Send email to the other party (legal or HAND)
 		    //
-		    String email = handMail;
-		    String cc_email = handMail2;										
+		    String email = handMail+emailStr;
+		    String cc_email = handMail2+emailStr;
 		    if(email.contains(user.getUserid())){
-			email = legalMail;
+			email = legalMail+emailStr;
 			cc_email = null;
 		    }
 		    if(!email.equals("")){ 

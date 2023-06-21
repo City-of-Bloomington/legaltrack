@@ -141,29 +141,7 @@ public class DefAddressEdit extends TopServlet{
 		logger.error(back);
 	    }
 	}
-	if(action.equals("zoom")){
-	    //
-	    String back = addr.doSelect();
-	    if(!back.equals("")){
-		logger.error(back);
-		message += back;
-		success = false;
-	    }
-	    if(addr.isInvalid()){
-		invalid_addr = "checked";
-	    }
-	    if(defId.equals("")){
-		defId = addr.getDefId();
-		defendant = new Defendant(defId, debug);
-		back = defendant.doSelect();
-		if(!back.equals("")){
-		    message += back;
-		    success = false;
-		    logger.error(back);
-		}				
-	    }
-	}
-	else if(action.equals("Update") && user.canEdit()){
+	if(action.equals("Update") && user.canEdit()){
 	    //
 	    // check for address
 	    //
@@ -215,6 +193,28 @@ public class DefAddressEdit extends TopServlet{
 	    else{
 		message += " Deleted Successfully";
 		id = "";
+	    }
+	}
+	else if(!id.isEmpty()){
+	    //
+	    String back = addr.doSelect();
+	    if(!back.equals("")){
+		logger.error(back);
+		message += back;
+		success = false;
+	    }
+	    if(addr.isInvalid()){
+		invalid_addr = "checked";
+	    }
+	    if(defId.equals("")){
+		defId = addr.getDefId();
+		defendant = new Defendant(defId, debug);
+		back = defendant.doSelect();
+		if(!back.equals("")){
+		    message += back;
+		    success = false;
+		    logger.error(back);
+		}				
 	    }
 	}
 	if(!invalid_addr.equals("")){

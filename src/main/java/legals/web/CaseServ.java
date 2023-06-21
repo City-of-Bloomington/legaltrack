@@ -48,7 +48,7 @@ public class CaseServ extends TopServlet{
     
 	String // f_name = "", l_name="", 
 	    street_num="",street_dir="",
-	    id="", citeId="",
+	    id="", citeId="", fullName="",
 	    street_name="",street_type="",sud_type="",sud_num="", post_dir="",
 	    legal_id="",per_day="", pro_supp="",mcc_flag="",
 	    status="PD", animals="", street_address="",
@@ -171,6 +171,9 @@ public class CaseServ extends TopServlet{
 	    else if (name.equals("status")) {
 		cCase.setStatus(value);
 	    }
+	    else if (name.equals("prev_status")) {
+		cCase.setPrevStatus(value);
+	    }	    
 	    else if (name.equals("ini_hear_date")) {
 		cCase.setIni_hear_date(value);
 	    }
@@ -259,6 +262,7 @@ public class CaseServ extends TopServlet{
 		res.sendRedirect(str);
 		return; 
 	    }
+	    fullName = user.getFullName();	    
 	}
 	else{
 	    String str = url+"Login";
@@ -453,6 +457,77 @@ public class CaseServ extends TopServlet{
 		    logger.error(back);
 		}
 	    }
+	    if(activeMail){
+		if(action.equals("Save")){
+		    //
+		    // send an email to the user to inform him
+		    // about his request
+		    //
+		    addresses = cCase.getAddresses();
+		    String msg = " For your information "+
+			"\n A new Legaltrack Case ID: <a href=\""+url+"CaseServ?id="+id+"\">"+id+"</a> "+
+			"\n Added today by "+fullName+
+			"\n ";
+		    if(addresses != null && addresses.size() > 0){
+			msg += " Violation address(es): ";
+			for(Address addr: addresses){
+			    msg += addr.getAddress();
+			    msg += "\n";
+			}
+			if(debug){
+			    logger.debug(" Mail msg: "+msg);
+			}
+		    }
+		    String subject = "LegalTrack New Case: "+id;
+		    //
+		    // excluded person to himself
+		    //
+		    String email = caseEmail+emailStr;
+		    if(!email.equals("")){ 
+			new MsgMail(email, // to
+				    user.getUserid()+emailStr,//from
+				    subject,
+				    msg,
+				    null, // CC
+				    false);
+		    }
+		}
+		else if(cCase.isStatusClosed()){
+		    //
+		    // send an email to the user to inform him
+		    // about his request
+		    //
+		    String email = caseEmail+emailStr;
+		    String msg = " For your information "+
+			"\n related Case ID:<a href=\""+url+"CaseServ?id="+id+"\">"+id+"</a>"+
+			"\n The case was closed by "+fullName+
+			"\n ";
+		    addresses = cCase.getAddresses();		    
+		    if(addresses != null && addresses.size() > 0){
+			msg += " Violation address(es): ";
+			for(Address addr: addresses){
+			    msg += addr.getAddress();
+			    msg += "\n";
+			}
+			if(debug){
+			    logger.debug(" Mail msg: "+msg);
+			}
+		    }
+		    String subject = "LegalTrack: Closing Case "+id;
+		    //
+		    // Send email to the other party (legal or HAND)
+		    //
+		    if(!email.equals("")){ 
+			new MsgMail(email, // to
+				    user.getUserid()+emailStr,//from
+				    subject,
+				    msg,
+				    null, // CC
+				    false);
+		    }
+		    
+		}
+	    }
 	}
 	if(!id.equals("")){
 	    LegalList ll = new LegalList(debug);
@@ -636,6 +711,7 @@ public class CaseServ extends TopServlet{
 		if(!id.equals("")){
 		    out.println("<input type=\"hidden\" name=\"id\" value=\""+id+"\" />");
 		    out.println("<input type=\"hidden\" name=\"action2\" value=\"\" />");
+		    out.println("<input type=\"hidden\" name=\"prev_status\" value=\""+cCase.getStatus()+"\" />");
 		}
 		out.println("<table width=\"95%\" border=\"1\">");
 
@@ -755,7 +831,7 @@ public class CaseServ extends TopServlet{
 		    out.println("<tr><th>Legal Action: </th><td class=\"left\">");
 		    if(!legal_id.equals("")){
 			out.println("<a href=\""+url+
-				    "LegalServ?action=zoom&amp;id="+legal_id+
+				    "LegalServ?id="+legal_id+
 				    "\">Related Actions</a>");
 		    }
 		    else{
@@ -1085,7 +1161,7 @@ public class CaseServ extends TopServlet{
 					addr.getRental_addr()+"</td><td>"+
 					addr.getInvalid_addr()+"</td><td>");
 			    out.println("<a href=\""+url+"AddressEdit?id="+addr.getId()+
-					"&amp;action=zoom\" "+
+					"\" "+
 					">Edit</a></td>");
 			    out.println("</tr>");
 			}

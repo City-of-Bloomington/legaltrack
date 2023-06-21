@@ -19,7 +19,8 @@ public class TopServlet extends HttpServlet {
 	legalMail="",
 	addrCheckUrl="",
 	handMail="", 
-	handMail2="", 
+	handMail2="",
+	caseEmail="",
 	parkingUser="", courtCostDefault="114";
     
     static String rentalUrl = ""; //old url5 
@@ -50,13 +51,16 @@ public class TopServlet extends HttpServlet {
 		logoUrl = str;
 	    str = context.getInitParameter("emailStr");
 	    if(str != null)
-		emailStr = str;
+		emailStr = "@"+str;
 	    str = context.getInitParameter("parkingUser");
 	    if(str != null)
 		parkingUser = str;
 	    str = context.getInitParameter("legalMail");
 	    if(str != null)
 		legalMail = str;
+	    str = context.getInitParameter("caseEmail");
+	    if(str != null)
+		caseEmail = str;
 	    str = context.getInitParameter("handMail");
 	    if(str != null)
 		handMail = str;

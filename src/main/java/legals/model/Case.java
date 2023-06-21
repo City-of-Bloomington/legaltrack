@@ -31,7 +31,7 @@ public class Case {
 	judgment_amount="", sent_date="", invld_addr="", addr_req_date="",
 	fine="",court_cost="",last_paid_date="",closed_date="",
 	closed_comments="", comments="", trans_collect_date="",
-	lawyerid="", citation_date="";
+	lawyerid="", citation_date="", prev_status="";
 	
     Status cStatus = null;
     CaseType caseType = null;
@@ -171,6 +171,10 @@ public class Case {
 	if(val != null)
 	    status = val;
     }
+    public void  setPrevStatus(String val){
+	if(val != null)
+	    prev_status = val;
+    }    
     public void  setTrans_collect_date(String val){
 	if(val != null)
 	    trans_collect_date = val;
@@ -483,6 +487,13 @@ public class Case {
     }		
     public List<Animal> getPets(){
 	return pets;
+    }
+    // 
+    public boolean statusChanged(){
+	return !status.equals(prev_status);
+    }
+    public boolean isStatusClosed(){
+	return statusChanged() && status.equals("CL");
     }
     public boolean hasAnimals(){
 	return pets != null && pets.size() > 0;

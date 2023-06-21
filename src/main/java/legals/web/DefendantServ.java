@@ -203,11 +203,11 @@ public class DefendantServ extends TopServlet{
 		}
 		if(!did.equals("")){
 		    message = " This defendant is already in the system <br>";
-		    message += " with <a href="+url+"Defendent?did="+did+
-			"&action=zoom";
+		    message += " with <a href=\""+url+"Defendent?did="+did+
+			"";
 		    if(!id.equals(""))
 			message += "&id="+id;
-		    message +=">"+did+"</a><br>";
+		    message +="\">"+did+"</a><br>";
 		    success = false;
 		}
 		else{
@@ -476,7 +476,7 @@ public class DefendantServ extends TopServlet{
 		    out.println("<td class=\"left\">"+addr.getCityStateZip()+"</td>");
 		    out.println("<td class=\"left\">"+addr.getInvalid_addr()+"</td>");
 		    out.println("<td class=\"left\">"+addr.getAddrDate()+"</td>");
-		    out.println("<td class=\"left\"><a href=\""+url+"DefAddressEdit?id="+addr.getId()+"&amp;defId="+did+"&amp;action=zoom\">Edit</a></td>");
+		    out.println("<td class=\"left\"><a href=\""+url+"DefAddressEdit?id="+addr.getId()+"&amp;defId="+did+"\">Edit</a></td>");
 		    out.println("</tr>");
 		}
 		out.println("<tr><td colspan=\"6\"><span class=\"green\">If a parking case and the address is modified or invalid, parking will be notified atuomatically</span> </td></tr>");
