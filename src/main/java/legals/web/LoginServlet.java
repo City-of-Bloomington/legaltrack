@@ -51,7 +51,7 @@ public class LoginServlet extends TopServlet {
 		PrintWriter out = response.getWriter();
 		String str ="<head><title></title><META HTTP-EQUIV=\""+
 		    "refresh\" CONTENT=\"0; URL=" + url +
-		    "IntroPage?";
+		    "Starter?";
 		str += "\">";
 		out.println(str);				
 		out.println("<body>");
